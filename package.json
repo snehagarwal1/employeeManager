@@ -22,13 +22,13 @@
     "author": "Daniel",
     "license": "ISC",
     "bugs": {
-      "url": "https://github.com/caporalCoder/test-web-pages/issues"
+      "url": "https://github.com/snehagarwal1/employeeManager/issues"
     },
     "devDependencies": {
       "http-server": "^14.1.1",
       "webpack": "^4.32.1",
       "webpack-cli": "^3.3.2"
     },
-    "homepage": "https://github.com/caporalCoder/test-web-pages#readme"
+    "homepage": "https://github.com/snehagarwal1/employeeManager#readme"
   }
   
