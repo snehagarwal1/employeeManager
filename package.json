@@ -1,0 +1,34 @@
+{
+    "name": "test-web-pages",
+    "version": "1.0.0",
+    "description": "Sneha's prototype",
+    "main": "employeManager.js",
+    "scripts": {
+      "start": "http-server",
+      "watch": "webpack --watch",
+      "build": "webpack"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/caporalCoder/test-web-pages.git"
+    },
+    "keywords": [
+      "web",
+      "development",
+      "frontend",
+      "JavaScript",
+      "indexedDB"
+    ],
+    "author": "Daniel",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/caporalCoder/test-web-pages/issues"
+    },
+    "devDependencies": {
+      "http-server": "^14.1.1",
+      "webpack": "^4.32.1",
+      "webpack-cli": "^3.3.2"
+    },
+    "homepage": "https://github.com/caporalCoder/test-web-pages#readme"
+  }
+  

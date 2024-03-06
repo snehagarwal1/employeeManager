@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IndexedDB Example</title>
+</head>
+<body>
+<h1>Employee Record</h1>
+<div>
+    <input type="text" id="name" placeholder="Name"><br>
+    <input type="text" id="job" placeholder ="Job position"><br>
+    <input type="text" id="employer" placeholder="Employer"><br>
+    <input type="number" id="salary" placeholder="Salary"><br><br>
+    <button onclick="addEmployee()">Add Employee</button><br> 
+</div>
+</br>
+<div>
+    <input type="number" id="randomCount" placeholder="Number of Employees" style="width: 150px;">
+    <button onclick="generateRandomEmployees()">Generate Random Employees</button>
+    </br></br>
+    <button onclick="deleteAllEmployees()">Delete All Employees</button> <!-- Delete All Employees Button -->
+</div>
+<h3>Employees</h3>
+<ul id="employeetList">
+    <!-- Employees will be listed here -->
+</ul>
+<div id="performance"></div>
+
+<script src="employeManager.js"></script>
+</body>
+</html>
+
