@@ -23,7 +23,17 @@
 </div>
 <h3>Employees</h3>
 <div id="performance"></div>
-<ul id="employeetList">
+
+<!-- Batch retrieval and deletion controls -->
+<div>
+    <h3>Batch Retrieval and Deletion</h3>
+    <input type="number" id="minKey" placeholder="minimum key value">
+    <input type="number" id="maxKey"  placeholder="maximum key value">
+    <button onclick="fetchEmployeesInRange()">Fetch Employees in Range</button>
+    <button onclick="deleteEmployeesInRange()">Delete Employees in Range</button>
+</div>
+
+<ul id="employeeList">
     <!-- Employees will be listed here -->
 </ul>
 

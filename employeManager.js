@@ -90,3 +90,64 @@ function deleteAllEmployees() {
         console.error('Transaction error: ', event.target.error);
     };
 }
+
+function fetchEmployeesInRange() {
+    const minKey = parseInt(document.getElementById('minKey').value);
+    const maxKey = parseInt(document.getElementById('maxKey').value);
+
+    const transaction = db.transaction(['employees'], 'readonly');
+    const store = transaction.objectStore('employees');
+    const request = store.openCursor();
+
+    request.onsuccess = function(event) {
+        const cursor = event.target.result;
+        const employeeList = document.getElementById('employeeList');
+        employeeList.innerHTML = '';
+
+        while (cursor) {
+            const employee = cursor.value;
+            const employeeKey = cursor.key;
+
+            if (employeeKey >= minKey && employeeKey <= maxKey) {
+                const li = document.createElement('li');
+                li.textContent = `${employee.name} - ${employee.job} - ${employee.employer} - ${employee.salary}`;
+                employeeList.appendChild(li);
+            }
+
+            cursor.continue();
+        }
+    };
+}
+
+function deleteEmployeesInRange() {
+    const minKey = parseInt(document.getElementById('minKey').value);
+    const maxKey = parseInt(document.getElementById('maxKey').value);
+
+    const transaction = db.transaction(['employees'], 'readwrite');
+    const store = transaction.objectStore('employees');
+    const request = store.openCursor();
+
+    request.onsuccess = function(event) {
+        const cursor = event.target.result;
+
+        if (cursor) {
+            const employeeKey = cursor.key;
+
+            if (employeeKey >= minKey && employeeKey <= maxKey) {
+                cursor.delete();
+            }
+
+            cursor.continue();
+        }
+    };
+
+    transaction.oncomplete = function() {
+        console.log('Employees in the specified range deleted.');
+        // Update the UI after deleting employees in the range.
+        fetchEmployees();
+    };
+
+    transaction.onerror = function(event) {
+        console.error('Transaction error: ', event.target.error);
+    };
+}
