@@ -12,8 +12,8 @@ request.onupgradeneeded = function(event) {
         objectStore = request.transaction.objectStore('employees');
     }
     objectStore.createIndex('name', 'name', {unique: false});
-    objectStore.createIndex('job', 'job', {unique: true});
-    objectStore.createIndex('employer', 'employer', {unique: true});
+    objectStore.createIndex('job', 'job', {unique: false});
+    objectStore.createIndex('employer', 'employer', {unique: false});
     objectStore.createIndex('salary', 'salary', {unique: false});
 };
 
