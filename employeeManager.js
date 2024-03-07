@@ -51,16 +51,21 @@ function fetchEmployees() {
     request.onsuccess = function(event) {
         const employees = event.target.result;
         const employeeList = document.getElementById('employeeList');
+        // Clear the employee list before populating with new data
         employeeList.innerHTML = '';
         employees.forEach(employee => {
             const li = document.createElement('li');
-            li.textContent = `${employee.name} - ${employee.job} - ${employee.employer} - ${employee.salary}`;
+            li.textContent = `${employee.id} -${employee.name} - ${employee.job} - ${employee.employer} - ${employee.salary}`;
             employeeList.appendChild(li);
         });
 
         const end = performance.now();
         document.getElementById('performance').textContent = `employees loaded in ${(end - start).toFixed(2)} milliseconds.`;
+
+        request.onerror = function(event) {
+            console.error('Fetch employees error: ', event.target.error);
     };
+}
 }
 
 function generateRandomEmployees() {
@@ -91,6 +96,12 @@ function deleteAllEmployees() {
     };
 }
 
+function clearEmployeeList() {
+    const employeeList = document.getElementById('employeeList');
+    employeeList.innerHTML = ''; // Clear the employee list
+    console.log('Employee list cleared.');
+}
+
 function fetchEmployeesInRange() {
     const minKey = parseInt(document.getElementById('minKey').value);
     const maxKey = parseInt(document.getElementById('maxKey').value);
@@ -99,23 +110,44 @@ function fetchEmployeesInRange() {
     const store = transaction.objectStore('employees');
     const request = store.openCursor();
 
+    const employeesInRange = [];
+
     request.onsuccess = function(event) {
         const cursor = event.target.result;
-        const employeeList = document.getElementById('employeeList');
-        employeeList.innerHTML = '';
 
-        while (cursor) {
+        if (cursor) {
             const employee = cursor.value;
             const employeeKey = cursor.key;
 
             if (employeeKey >= minKey && employeeKey <= maxKey) {
-                const li = document.createElement('li');
-                li.textContent = `${employee.name} - ${employee.job} - ${employee.employer} - ${employee.salary}`;
-                employeeList.appendChild(li);
+                employeesInRange.push(employee);
+                fetchEmployees(employeesInRange);
+
+            } else if (employeeKey > maxKey) {
+                // We've moved beyond the maxKey, so we can stop the iteration.
+                fetchEmployees(employeesInRange);
+                return;
+                
+            } else {
+
+            // Move to the next record.
+            cursor.continue();
             }
 
-            cursor.continue();
+        } else {
+            // Cursor reached the end, process the fetched records.
+            fetchEmployees(employeesInRange);
         }
+
+        transaction.oncomplete = function() {
+            console.log('Employees in the specified range fetched.');
+            // Update the UI after deleting employees in the range.
+            fetchEmployees(employeesInRange);
+        };
+    };
+    
+    transaction.onerror = function(event) {
+        console.error('Transaction error: ', event.target.error);
     };
 }
 
@@ -151,3 +183,4 @@ function deleteEmployeesInRange() {
         console.error('Transaction error: ', event.target.error);
     };
 }
+
