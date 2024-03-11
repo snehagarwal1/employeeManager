@@ -206,6 +206,9 @@ function fetchRecordsInBatch() {
             // Process the fetched records or do something else with them
             console.log('Fetched Records:', records);
 
+            // Display the fetched records on the webpage
+            displayFetchedRecords(records);
+
             // Check if there are more records to fetch
             if (cursor && records.length === batchSize) {
                 // If more records available, fetch next batch
@@ -215,7 +218,7 @@ function fetchRecordsInBatch() {
                 // No more records available or fetched enough records
                 console.log('No more records to fetch or fetched enough records.');
             }
-               fetchBatchEmployees(records);
+               //fetchBatchEmployees(records);
         }
     };
 
@@ -224,41 +227,62 @@ function fetchRecordsInBatch() {
     };
 }
 
-function fetchBatchEmployees() {
-    const start = performance.now();
-    const transaction = db.transaction(['employees'], 'readonly');
-    const store = transaction.objectStore('employees');
-    const request = store.getAll();
+function displayFetchedRecords(records) {
+    const employeeList = document.getElementById('employeeList');
+    
+    // Clear the employee list before populating with new data
+    employeeList.innerHTML = '';
 
-    request.onsuccess = function(event) {
-        const employees = event.target.result;
-        const employeeList = document.getElementById('employeeList');
-        
-        // Clear the employee list before populating with new data
-        employeeList.innerHTML = '';
+    records.forEach(employee => {
+        // Create a list item element
+        const li = document.createElement('li');
 
-        employees.forEach(employee => {
-            // Create a list item element
-            const li = document.createElement('li');
+        // Create a text node containing the employee details
+        const textNode = document.createTextNode(`${employee.id} - ${employee.name} - ${employee.job} - ${employee.employer} - ${employee.salary}`);
 
-            // Create a text node containing the employee details
-            const textNode = document.createTextNode(`${employee.id} - ${employee.name} - ${employee.job} - ${employee.employer} - ${employee.salary}`);
+        // Append the text node to the list item
+        li.appendChild(textNode);
 
-            // Append the text node to the list item
-            li.appendChild(textNode);
-
-            // Append the list item to the employee list container
-            employeeList.appendChild(li);
-        });
-
-        const end = performance.now();
-        document.getElementById('performance').textContent = `Employees loaded in ${(end - start).toFixed(2)} milliseconds.`;
-    };
-
-    request.onerror = function(event) {
-        console.error('Fetch employees error: ', event.target.error);
-    };
+        // Append the list item to the employee list container
+        employeeList.appendChild(li);
+    });
 }
+
+// function fetchBatchEmployees() {
+//     const start = performance.now();
+//     const transaction = db.transaction(['employees'], 'readonly');
+//     const store = transaction.objectStore('employees');
+//     const request = store.getAll();
+
+//     request.onsuccess = function(event) {
+//         const employees = event.target.result;
+//         const employeeList = document.getElementById('employeeList');
+        
+//         // Clear the employee list before populating with new data
+//         employeeList.innerHTML = '';
+
+//         employees.forEach(employee => {
+//             // Create a list item element
+//             const li = document.createElement('li');
+
+//             // Create a text node containing the employee details
+//             const textNode = document.createTextNode(`${employee.id} - ${employee.name} - ${employee.job} - ${employee.employer} - ${employee.salary}`);
+
+//             // Append the text node to the list item
+//             li.appendChild(textNode);
+
+//             // Append the list item to the employee list container
+//             employeeList.appendChild(li);
+//         });
+
+//         const end = performance.now();
+//         document.getElementById('performance').textContent = `Employees loaded in ${(end - start).toFixed(2)} milliseconds.`;
+//     };
+
+//     request.onerror = function(event) {
+//         console.error('Fetch employees error: ', event.target.error);
+//     };
+// }
 
 function deleteRecordsInBatch() {
     const batchSize = document.getElementById('batchSize').value;
