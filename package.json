@@ -2,7 +2,7 @@
     "name": "test-web-pages",
     "version": "1.0.0",
     "description": "Sneha's prototype",
-    "main": "employeeManager.js",
+    "main": "employzManager.js",
     "scripts": {
       "start": "http-server",
       "watch": "webpack --watch",
