@@ -123,6 +123,16 @@ function addRandomEmployees() {
     };
 }
 
+function clearPerformanceAndSizeData() {
+    const performance= document.getElementById('performance');
+    performance.innerHTML = ''; // Clear the performance list
+    console.log('performance cleared.');
+
+    const totalRecordSize= document.getElementById('totalRecordSize');
+    totalRecordSize.innerHTML = ''; // Clear the totalRecordSize list
+    console.log('totalRecordSize cleared.');
+}
+
 function deleteAllEmployees() {
     const start = performance.now();
     const transaction = db.transaction(['employees'], 'readwrite');
