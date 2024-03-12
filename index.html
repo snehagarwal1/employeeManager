@@ -18,12 +18,15 @@
 </br>
 <div>
     <input type="number" id="randomCount" placeholder="Number of Employees" style="width: 150px;">
-    <button onclick="generateRandomEmployees()">Generate Random Employees</button>
+    <input type="number" id="recordSize" placeholder="size of each record in KB" style="width: 150px;">
+    <button onclick="addRandomEmployees()">Add Random Employees</button>
+    <!-- <button onclick="generateRandomEmployees()">Generate Random Employees</button> -->
     <button onclick="deleteAllEmployees()">Delete All Employees</button> <!-- Delete All Employees Button -->
 </div>
 </br>
 </br>
 <div id="performance"></div>
+<div id="totalRecordSize"></div>
 </br>
 
 <!-- Batch retrieval and deletion controls in forward direction-->
@@ -61,7 +64,7 @@
     <!-- Employees will be listed here -->
 </ul>
 
-<script src="employpManager.js"></script>
+<script src="employ2Manager.js"></script>
 </body>
 </html>
 

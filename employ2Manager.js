@@ -68,19 +68,74 @@ function fetchEmployees() {
 }
 }
 
-function generateRandomEmployees() {
-    const start = performance.now();
-    const count = document.getElementById('randomCount').value || 1;
-    for (let i = 0; i < count; i++) {
-        const name = `RandomName ${Math.random().toString(36).substring(7)}`;
-        const job = `RandomJob ${Math.random().toString(36).substring(7)}`;
-        const employer = `RandomEmployer ${Math.random().toString(36).substring(7)}`;
-        const salary = Math.floor(Math.random() * 100000) + 50000;
-        addEmployee(name, job, employer, salary);
+function generateRandomData(sizeInBytes) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let randomData = '';
+    
+    for (let i = 0; i < sizeInBytes; i++) {
+        randomData += characters.charAt(Math.floor(Math.random() * characters.length));
     }
-    const end = performance.now();
-        document.getElementById('performance').textContent = `All employees loaded in ${(end - start).toFixed(2)} milliseconds.`;
+    
+    return randomData;
 }
+
+// Function to add records to the database
+function addRandomEmployees() {
+    const start = performance.now();
+    const transaction = db.transaction(['employees'], 'readwrite');
+    const objectStore = transaction.objectStore('employees');
+
+    const randomCount = parseInt(document.getElementById('randomCount').value) || 1;
+    let recordSize = parseInt(document.getElementById('recordSize').value);
+    // convert user input to KB
+    recordSize = recordSize * 1024; // KB to bytes
+    let totalRecordSize = 0;
+
+    for (let i = 0; i < randomCount; i++) {
+        const randomData = generateRandomData(recordSize);
+        const employee = {
+            name: 'Random Name',
+            job: 'Random Job',
+            employer: 'Random Employer',
+            salary: 50000, // Random salary or any default value
+            data: randomData // This makes up for the record size input by the user.
+        };
+        objectStore.add(employee);
+        totalRecordSize += recordSize; // Add the size of the current record to the total
+
+         // Calculate total size in MB after transaction completes
+         const totalRecordSizeMB = totalRecordSize / (1024 * 1024); // convert to MB
+         document.getElementById('totalRecordSize').textContent = `Total size of the DB using ${recordSize / 1024} KB per record is: ${totalRecordSizeMB.toFixed(2)} MB`;
+    }
+
+    transaction.oncomplete = function() {
+        console.log('Records added successfully.');
+        console.log(`${randomCount} records added successfully.`);
+        console.log(`Total database size: ${totalRecordSize * randomCount} bytes`);
+        fetchEmployees();
+    };
+
+    const end = performance.now();
+    document.getElementById('performance').textContent = `employees loaded in ${(end - start).toFixed(2)} milliseconds.`;
+
+    transaction.onerror = function(event) {
+        console.error('Error adding records:', event.target.error);
+    };
+}
+
+// function generateRandomEmployees() {
+//     const start = performance.now();
+//     const count = document.getElementById('randomCount').value || 1;
+//     for (let i = 0; i < count; i++) {
+//         const name = `RandomName ${Math.random().toString(36).substring(7)}`;
+//         const job = `RandomJob ${Math.random().toString(36).substring(7)}`;
+//         const employer = `RandomEmployer ${Math.random().toString(36).substring(7)}`;
+//         const salary = Math.floor(Math.random() * 100000) + 50000;
+//         addEmployee(name, job, employer, salary);
+//     }
+//     const end = performance.now();
+//         document.getElementById('performance').textContent = `All employees loaded in ${(end - start).toFixed(2)} milliseconds.`;
+// }
 
 function deleteAllEmployees() {
     const start = performance.now();
@@ -109,49 +164,23 @@ function clearEmployeeList() {
     console.log('Employee list cleared.');
 }
 
-
-// Batch retrival of employees in forward direction
-// Batch retrival of employees in forward direction
 function fetchEmployeesInBatch() {
-    const start = performance.now();
-    const batchSize = document.getElementById('batchSize').value;
+    const batchSize = parseInt(document.getElementById('batchSize').value);
+
     const transaction = db.transaction(['employees'], 'readonly');
     const store = transaction.objectStore('employees');
 
-    let cursorRequest;
-    let records = [];
+    const request = store.getAll(null, batchSize);
 
-    // Open a cursor with direction 'prev' to fetch records in reverse order
-    cursorRequest = store.openCursor(null, 'next');
+    request.onsuccess = function(event) {
+        const records = event.target.result;
+        console.log('Fetched Records:', records);
 
-    cursorRequest.onsuccess = function(event) {
-        const cursor = event.target.result;
-
-        if (cursor && records.length < batchSize) {
-            records.push(cursor.value);
-            cursor.continue(); // Move to the previous record
-        } else {
-            // Process the fetched records or do something else with them
-            console.log('Fetched Records:', records);
-
-            // Display the fetched records on the webpage
-            displayFetchedEmployeeRecords(records);
-
-            // Check if there are more records to fetch
-            if (cursor && records.length === batchSize) {
-                // If more records available, fetch next batch
-                records = [];
-                cursor.continue();
-            } else {
-                // No more records available or fetched enough records
-                console.log('No more records to fetch or fetched enough records.');
-            }  
-        }
-        const end = performance.now();
-        document.getElementById('performance').textContent = `All employees retrieved in ${(end - start).toFixed(2)} milliseconds.`;
+        // Do something with the fetched records (e.g., display them on the webpage)
+        displayFetchedEmployeeRecords(records);
     };
 
-    cursorRequest.onerror = function(event) {
+    request.onerror = function(event) {
         console.error('Error fetching records:', event.target.error);
     };
 }
@@ -213,7 +242,7 @@ function deleteEmployeeRecordsInBatch() {
     };
 }
 
-// Reverse Direction Batch Retrieval and Deletion
+// Reverse Direction Batch Retrieval and Deletion using OpenCursor()
 function fetchRecordsInBatch() {
     const start = performance.now();
     const batchSize = document.getElementById('batchSizeReverse').value;
@@ -313,5 +342,43 @@ function deleteRecordsInBatch() {
 
     transaction.onerror = function(event) {
         console.error('Error deleting records:', event.target.error);
+    };
+}
+
+// Refresh and display records 
+
+function refreshAndDisplayRecords() {
+    const start = performance.now();
+    const transaction = db.transaction(['employees'], 'readonly');
+    const store = transaction.objectStore('employees');
+    const request = store.getAll();
+
+    request.onsuccess = function(event) {
+        const employees = event.target.result;
+        const employeeList = document.getElementById('allEmployees');
+        
+        // Clear the employee list before populating with new data
+        employeeList.innerHTML = '';
+
+        employees.forEach(employee => {
+            // Create a list item element
+            const li = document.createElement('li');
+
+            // Create a text node containing the employee details
+            const textNode = document.createTextNode(`${employee.id} - ${employee.name} - ${employee.job} - ${employee.employer} - ${employee.salary}`);
+
+            // Append the text node to the list item
+            li.appendChild(textNode);
+
+            // Append the list item to the employee list container
+            employeeList.appendChild(li);
+        });
+
+        const end = performance.now();
+        document.getElementById('performance').textContent = `Records refreshed and displayed in ${(end - start).toFixed(2)} milliseconds.`;
+    };
+
+    request.onerror = function(event) {
+        console.error('Error fetching records:', event.target.error);
     };
 }
