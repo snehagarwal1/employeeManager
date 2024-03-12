@@ -15,43 +15,52 @@
     <button onclick="addEmployee()">Add Employee</button>
 </div>
 </br>
+</br>
 <div>
     <input type="number" id="randomCount" placeholder="Number of Employees" style="width: 150px;">
     <button onclick="generateRandomEmployees()">Generate Random Employees</button>
-    </br></br>
     <button onclick="deleteAllEmployees()">Delete All Employees</button> <!-- Delete All Employees Button -->
 </div>
-<h3>Employees</h3>
+</br>
+</br>
 <div id="performance"></div>
+</br>
 
-<!-- Batch retrieval and deletion controls -->
+<!-- Batch retrieval and deletion controls in forward direction-->
 <div>
-    <h3>Range Retrieval and Deletion</h3>
-    <input type="number" id="minKey" placeholder="minimum key value">
-    <input type="number" id="maxKey"  placeholder="maximum key value">
-    <button onclick="fetchEmployeesInRange()">Fetch Employees in Range</button>
-    <button onclick="deleteEmployeesInRange()">Delete Employees in Range</button>
-    <button onclick="clearEmployeeList()">Clear Employee List</button> <!-- Clear Employee List Button -->
-</div>
-
-<div>
-    <h3>Batch Retrieval and Deletion in opposite direction</h3>
-    <!-- <input type="number" id="maxKeyTwo"  placeholder="Maximum key value">
-    <input type="number" id="minKeyTwo" placeholder="Minimum key value"> -->
+    <h3>Batch Retrieval and Deletion in forward direction</h3>
     <input type="number" id="batchSize" placeholder="Batch size value">
-    <button onclick="fetchRecordsInBatch()">Fetch Employees in batch</button> 
-    <button onclick="deleteRecordsInBatch()">Delete Employees in  batch</button>
-    
-    <!-- <button onclick="fetchEmployeesWithBatchSize()">Fetch Employees in Range and batch</button> -->
-    <!-- <button onclick="fetchEmployeesInReverseOrder()">Fetch Employees</button> -->
-    <!-- <button onclick="deleteEmployeesInReverseOrder()">Delete Employees</button> -->
+    <button onclick="fetchEmployeesInBatch()">Fetch Employees in Range</button> 
+    <button onclick="deleteEmployeeRecordsInBatch()">Delete Employees in  batch</button>
     <button onclick="clearEmployeeList()">Clear Employee List</button> <!-- Clear Employee List Button -->
 </div>
+
 <ul id="employeeList">
     <!-- Employees will be listed here -->
 </ul>
 
-<script src="employxManager.js"></script>
+
+<!-- Batch retrieval and deletion controls in reverse direction-->
+<div>
+    <h3>Batch Retrieval and Deletion in reverse direction</h3>
+    <input type="number" id="batchSizeReverse" placeholder="Batch size value">
+    <button onclick="fetchRecordsInBatch()">Fetch Employees in batch</button> 
+    <button onclick="deleteRecordsInBatch()">Delete Employees in  batch</button>
+    <button onclick="clearEmployeeList()">Clear Employee List</button> <!-- Clear Employee List Button -->
+</div>
+
+<ul id="employeeListReverse">
+    <!-- Employees will be listed here -->
+</ul>
+
+</br>
+<h3>-------------All Employees------------</h3>
+<h3>Employees</h3>
+<ul id="allEmployees">
+    <!-- Employees will be listed here -->
+</ul>
+
+<script src="employnManager.js"></script>
 </body>
 </html>
 
