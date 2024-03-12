@@ -79,7 +79,7 @@ function generateRandomData(sizeInBytes) {
     return randomData;
 }
 
-// Function to add records to the database
+// Function to add records to the database based on user input of size in kb/ record and record number.
 function addRandomEmployees() {
     const start = performance.now();
     const transaction = db.transaction(['employees'], 'readwrite');
@@ -123,20 +123,6 @@ function addRandomEmployees() {
     };
 }
 
-// function generateRandomEmployees() {
-//     const start = performance.now();
-//     const count = document.getElementById('randomCount').value || 1;
-//     for (let i = 0; i < count; i++) {
-//         const name = `RandomName ${Math.random().toString(36).substring(7)}`;
-//         const job = `RandomJob ${Math.random().toString(36).substring(7)}`;
-//         const employer = `RandomEmployer ${Math.random().toString(36).substring(7)}`;
-//         const salary = Math.floor(Math.random() * 100000) + 50000;
-//         addEmployee(name, job, employer, salary);
-//     }
-//     const end = performance.now();
-//         document.getElementById('performance').textContent = `All employees loaded in ${(end - start).toFixed(2)} milliseconds.`;
-// }
-
 function deleteAllEmployees() {
     const start = performance.now();
     const transaction = db.transaction(['employees'], 'readwrite');
@@ -164,6 +150,7 @@ function clearEmployeeList() {
     console.log('Employee list cleared.');
 }
 
+// Batch retrival and deletetion in forward direction using getAall()
 function fetchEmployeesInBatch() {
     const batchSize = parseInt(document.getElementById('batchSize').value);
 
@@ -346,7 +333,6 @@ function deleteRecordsInBatch() {
 }
 
 // Refresh and display records 
-
 function refreshAndDisplayRecords() {
     const start = performance.now();
     const transaction = db.transaction(['employees'], 'readonly');
