@@ -294,7 +294,7 @@ function fetchRecordsInBatch() {
             // Calculate total size of the fetched records
             let totalRecordSize = 0;
             records.forEach(record => {
-                // Assuming each record has a 'data' field representing its size
+                // Each record has a 'data' field representing its size
                 totalRecordSize += record.data.length; // Adjust accordingly if 'data' represents the size differently
             });
 
