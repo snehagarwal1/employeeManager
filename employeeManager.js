@@ -170,69 +170,117 @@ function clearEmployeeList() {
 }
 
 // Batch retrival and deletetion in forward direction using getAall()
+// function fetchEmployeesInBatch() {
+//     const start = performance.now();
+//     const batchSize = parseInt(document.getElementById('batchSize').value);
+
+//     const transaction = db.transaction(['employees'], 'readonly');
+//     const store = transaction.objectStore('employees');
+
+//     const request = store.getAll(null, batchSize);
+
+//     request.onsuccess = function(event) {
+//         const records = event.target.result;
+//         console.log('Fetched Records:', records);
+
+//         // Display the fetched records on web page
+//         displayFetchedEmployeeRecords(records);
+
+//         // Calculate total size of the fetched records
+//         let totalRecordSize = 0;
+//         records.forEach(record => {
+//             // Each record has a 'data' field representing its size
+//             totalRecordSize += record.data.length; // Adjust accordingly if 'data' represents the size differently
+        
+//             // Calculate total size in MB after transaction completes
+//             const totalRecordSizeMB = totalRecordSize / (1024 * 1024); // convert to MB
+//             document.getElementById('totalRecordSize').textContent = `Total 
+//             size of the DB using ${((totalRecordSize/batchSize)/1024).toFixed(2)} KB per 
+//             record is: ${totalRecordSizeMB.toFixed(2)} MB`; // display the result 
+//         });
+
+//         console.log('Total size of fetched records:', totalRecordSize, 'bytes');
+
+//         const end = performance.now();
+//         document.getElementById('performance').textContent = `Employees fetched
+//         in ${(end - start).toFixed(2)} milliseconds.`;
+//     };
+
+//     request.onerror = function(event) {
+//         console.error('Error fetching records:', event.target.error);
+//     };
+// }
+let keyRange = null;
+
+function fetchMore(batchSize) {
+    const records = event.target.result;
+      if (records && records.length === batchSize) {
+        keyRange = IDBKeyRange.lowerBound(records.at(-1).id, true);
+        fetchEmployeesInBatch();
+      }
+    };
+
 function fetchEmployeesInBatch() {
     const start = performance.now();
     const batchSize = parseInt(document.getElementById('batchSize').value);
-
     const transaction = db.transaction(['employees'], 'readonly');
     const store = transaction.objectStore('employees');
+    store.getAll(keyRange, batchSize).onsuccess = e => {
+    const records = e.target.result;
+    displayFetchedEmployeeRecords(records);
+    fetchMore(batchSize);
 
-    const request = store.getAll(null, batchSize);
-
-    request.onsuccess = function(event) {
-        const records = event.target.result;
-        console.log('Fetched Records:', records);
-
-        // Display the fetched records on web page
-        displayFetchedEmployeeRecords(records);
-
-        // Calculate total size of the fetched records
-        let totalRecordSize = 0;
-        records.forEach(record => {
-            // Each record has a 'data' field representing its size
-            totalRecordSize += record.data.length; // Adjust accordingly if 'data' represents the size differently
-        
-            // Calculate total size in MB after transaction completes
-            const totalRecordSizeMB = totalRecordSize / (1024 * 1024); // convert to MB
-            document.getElementById('totalRecordSize').textContent = `Total 
-            size of the DB using ${((totalRecordSize/batchSize)/1024).toFixed(2)} KB per 
-            record is: ${totalRecordSizeMB.toFixed(2)} MB`; // display the result 
-        });
-
-        console.log('Total size of fetched records:', totalRecordSize, 'bytes');
-
-        const end = performance.now();
-        document.getElementById('performance').textContent = `Employees fetched
+    const end = performance.now();
+    document.getElementById('performance').textContent = `Employees fetched
         in ${(end - start).toFixed(2)} milliseconds.`;
-    };
-
-    request.onerror = function(event) {
-        console.error('Error fetching records:', event.target.error);
-    };
+}
 }
 
-function displayFetchedEmployeeRecords(records) {
-    const employeeList = document.getElementById('employeeList');
+function displayFetchedEmployeeRecords(employees) {
+  const employeeList = document.getElementById('employeeList');
+
+  // Clear the employee list before populating with new data 
+  employeeList.innerHTML = '';
+
+  employees.forEach(employee => {
+    // Create a list item element
+    const li = document.createElement('li');
+
+    // Create a text node containing the employee details
+    li.textContent = `${employee.id} -${employee.name} - ${employee.job} - ${employee.employer}`;
+    employeeList.appendChild(li);
+  });
+  
+  const li = document.createElement('li');
+  li.textContent = "------------------ Batch End ------------------";;
+
+  // Append the list item to the employee list container
+  employeeList.appendChild(li);
+}
+
+
+// function displayFetchedEmployeeRecords(records) {
+//     const employeeList = document.getElementById('employeeList');
     
-    // Clear the employee list before populating with new data
-    employeeList.innerHTML = '';
+//     // Clear the employee list before populating with new data
+//     employeeList.innerHTML = '';
 
-    records.forEach(employee => {
-        // Create a list item element
-        const li = document.createElement('li');
+//     records.forEach(employee => {
+//         // Create a list item element
+//         const li = document.createElement('li');
 
-        // Create a text node containing the employee details
-        const textNode = document.createTextNode(`${employee.id} - 
-        ${employee.name} - ${employee.job} - ${employee.employer} - 
-        ${employee.salary}`);
+//         // Create a text node containing the employee details
+//         const textNode = document.createTextNode(`${employee.id} - 
+//         ${employee.name} - ${employee.job} - ${employee.employer} - 
+//         ${employee.salary}`);
 
-        // Append the text node to the list item
-        li.appendChild(textNode);
+//         // Append the text node to the list item
+//         li.appendChild(textNode);
 
-        // Append the list item to the employee list container
-        employeeList.appendChild(li);
-    });
-}
+//         // Append the list item to the employee list container
+//         employeeList.appendChild(li);
+//     });
+// }
 
 function deleteEmployeeRecordsInBatch() {
     const start = performance.now();
