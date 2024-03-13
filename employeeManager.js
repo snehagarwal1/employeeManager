@@ -183,13 +183,13 @@ function fetchEmployeesInBatch() {
         const records = event.target.result;
         console.log('Fetched Records:', records);
 
-        // Do something with the fetched records (e.g., display them on the webpage)
+        // Display the fetched records on web page
         displayFetchedEmployeeRecords(records);
 
         // Calculate total size of the fetched records
         let totalRecordSize = 0;
         records.forEach(record => {
-            // Assuming each record has a 'data' field representing its size
+            // Each record has a 'data' field representing its size
             totalRecordSize += record.data.length; // Adjust accordingly if 'data' represents the size differently
         
             // Calculate total size in MB after transaction completes
@@ -247,7 +247,7 @@ function deleteEmployeeRecordsInBatch() {
     // Extract record IDs from the displayed list items
     for (let i = 0; i < listItems.length; i++) {
         const text = listItems[i].textContent.trim();
-        const recordId = parseInt(text.split('-')[0].trim()); // Assuming record ID is at the beginning of the text
+        const recordId = parseInt(text.split('-')[0].trim());
         recordIdsToDelete.push(recordId);
     }
 
@@ -306,7 +306,7 @@ function fetchRecordsInBatch() {
             size of the DB using ${((totalRecordSize/batchSize)/1024).toFixed(2)}
             KB per record is: ${totalRecordSizeMB.toFixed(2)} MB`;
 
-            // Process the fetched records or do something else with them.
+            // Process the fetched records.
             console.log('Fetched Records:', records);
 
             // Display the fetched records on the webpage
@@ -369,7 +369,7 @@ function deleteRecordsInBatch() {
     // Extract record IDs from the displayed list items
     for (let i = 0; i < listItems.length; i++) {
         const text = listItems[i].textContent.trim();
-        const recordId = parseInt(text.split('-')[0].trim()); // Assuming record ID is at the beginning of the text
+        const recordId = parseInt(text.split('-')[0].trim());
         recordIdsToDelete.push(recordId);
     }
 
