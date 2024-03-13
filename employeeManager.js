@@ -199,9 +199,6 @@ function fetchEmployeesInBatch() {
 function displayFetchedEmployeeRecords(employees) {
   const employeeList = document.getElementById('employeeList');
 
-  // Clear the employee list before populating with new data 
-  employeeList.innerHTML = '';
-
   employees.forEach(employee => {
     // Create a list item element
     const li = document.createElement('li');
