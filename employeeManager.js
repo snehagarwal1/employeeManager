@@ -162,6 +162,7 @@ function clearEmployeeList() {
 
 // Batch retrival and deletetion in forward direction using getAall()
 function fetchEmployeesInBatch() {
+    const start = performance.now();
     const batchSize = parseInt(document.getElementById('batchSize').value);
 
     const transaction = db.transaction(['employees'], 'readonly');
@@ -175,6 +176,9 @@ function fetchEmployeesInBatch() {
 
         // Do something with the fetched records (e.g., display them on the webpage)
         displayFetchedEmployeeRecords(records);
+
+        const end = performance.now();
+        document.getElementById('performance').textContent = `All employees deleted in ${(end - start).toFixed(2)} milliseconds.`;
     };
 
     request.onerror = function(event) {
@@ -341,6 +345,13 @@ function deleteRecordsInBatch() {
         console.error('Error deleting records:', event.target.error);
     };
 }
+
+function clearEmployeeListReverse() {
+    const employeeList = document.getElementById('employeeListReverse');
+    employeeList.innerHTML = ''; // Clear the employee list
+    console.log('Employee list cleared.');
+}
+
 
 // Refresh and display records 
 function refreshAndDisplayRecords() {
