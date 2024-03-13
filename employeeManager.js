@@ -7,7 +7,8 @@ request.onupgradeneeded = function(event) {
     db = event.target.result;
     let objectStore;
     if (!db.objectStoreNames.contains('employees')) {
-        objectStore = db.createObjectStore('employees', {keyPath: 'id', autoIncrement: true});
+        objectStore = db.createObjectStore('employees', {keyPath: 'id', 
+        autoIncrement: true});
     } else {
         objectStore = request.transaction.objectStore('employees');
     }
@@ -26,21 +27,21 @@ request.onerror = function(event) {
     console.error('Database error: ', event.target.error);
 };
 
-function addEmployee(name = '', job = '', employer = '', salary = '') {
-    const transaction = db.transaction(['employees'], 'readwrite');
-    const store = transaction.objectStore('employees');
-    const employee = {
-        name: name || document.getElementById('name').value,
-        job: job || document.getElementById('job').value,
-        employer: employer || document.getElementById('employer').value,
-        salary: salary || document.getElementById('salary').value,
-    };
-    store.add(employee);
+// function addEmployee(name = '', job = '', employer = '', salary = '') {
+//     const transaction = db.transaction(['employees'], 'readwrite');
+//     const store = transaction.objectStore('employees');
+//     const employee = {
+//         name: name || document.getElementById('name').value,
+//         job: job || document.getElementById('job').value,
+//         employer: employer || document.getElementById('employer').value,
+//         salary: salary || document.getElementById('salary').value,
+//     };
+//     store.add(employee);
 
-    transaction.oncomplete = function() {
-        fetchEmployees();
-    };
-}
+//     transaction.oncomplete = function() {
+//         fetchEmployees();
+//     };
+// }
 
 function fetchEmployees() {
     const start = performance.now();
@@ -55,12 +56,14 @@ function fetchEmployees() {
         employeeList.innerHTML = '';
         employees.forEach(employee => {
             const li = document.createElement('li');
-            li.textContent = `${employee.id} -${employee.name} - ${employee.job} - ${employee.employer} - ${employee.salary}`;
+            li.textContent = `${employee.id} -${employee.name} - 
+            ${employee.job} - ${employee.employer} - ${employee.salary}`;
             employeeList.appendChild(li);
         });
 
         const end = performance.now();
-        document.getElementById('performance').textContent = `employees loaded in ${(end - start).toFixed(2)} milliseconds.`;
+        document.getElementById('performance').textContent = `employees loaded 
+        in ${(end - start).toFixed(2)} milliseconds.`;
 
         request.onerror = function(event) {
             console.error('Fetch employees error: ', event.target.error);
@@ -73,7 +76,8 @@ function generateRandomData(sizeInBytes) {
     let randomData = '';
     
     for (let i = 0; i < sizeInBytes; i++) {
-        randomData += characters.charAt(Math.floor(Math.random() * characters.length));
+        randomData += characters.charAt(Math.floor(Math.random() * 
+        characters.length));
     }
     
     return randomData;
@@ -85,7 +89,8 @@ function addRandomEmployees() {
     const transaction = db.transaction(['employees'], 'readwrite');
     const objectStore = transaction.objectStore('employees');
 
-    const randomCount = parseInt(document.getElementById('randomCount').value) || 1;
+    const randomCount = parseInt(document.getElementById('randomCount').value) 
+    || 1;
     let recordSize = parseInt(document.getElementById('recordSize').value);
     // convert user input to KB
     recordSize = recordSize * 1024; // KB to bytes
@@ -105,7 +110,9 @@ function addRandomEmployees() {
 
          // Calculate total size in MB after transaction completes
          const totalRecordSizeMB = totalRecordSize / (1024 * 1024); // convert to MB
-         document.getElementById('totalRecordSize').textContent = `Total size of the DB using ${recordSize / 1024} KB per record is: ${totalRecordSizeMB.toFixed(2)} MB`;
+         document.getElementById('totalRecordSize').textContent = `Total size 
+         of the DB using ${recordSize / 1024} KB per record is: 
+         ${totalRecordSizeMB.toFixed(2)} MB`;
     }
 
     transaction.oncomplete = function() {
@@ -116,7 +123,8 @@ function addRandomEmployees() {
     };
 
     const end = performance.now();
-    document.getElementById('performance').textContent = `employees loaded in ${(end - start).toFixed(2)} milliseconds.`;
+    document.getElementById('performance').textContent = `employees loaded 
+    in ${(end - start).toFixed(2)} milliseconds.`;
 
     transaction.onerror = function(event) {
         console.error('Error adding records:', event.target.error);
@@ -146,7 +154,8 @@ function deleteAllEmployees() {
         fetchEmployees(); 
 
         const end = performance.now();
-        document.getElementById('performance').textContent = `All employees deleted in ${(end - start).toFixed(2)} milliseconds.`;
+        document.getElementById('performance').textContent = `All employees 
+        deleted in ${(end - start).toFixed(2)} milliseconds.`;
     };
 
     transaction.onerror = function(event) {
@@ -177,8 +186,24 @@ function fetchEmployeesInBatch() {
         // Do something with the fetched records (e.g., display them on the webpage)
         displayFetchedEmployeeRecords(records);
 
+        // Calculate total size of the fetched records
+        let totalRecordSize = 0;
+        records.forEach(record => {
+            // Assuming each record has a 'data' field representing its size
+            totalRecordSize += record.data.length; // Adjust accordingly if 'data' represents the size differently
+        
+            // Calculate total size in MB after transaction completes
+            const totalRecordSizeMB = totalRecordSize / (1024 * 1024); // convert to MB
+            document.getElementById('totalRecordSize').textContent = `Total 
+            size of the DB using ${((totalRecordSize/batchSize)/1024).toFixed(2)} KB per 
+            record is: ${totalRecordSizeMB.toFixed(2)} MB`; // display the result 
+        });
+
+        console.log('Total size of fetched records:', totalRecordSize, 'bytes');
+
         const end = performance.now();
-        document.getElementById('performance').textContent = `All employees deleted in ${(end - start).toFixed(2)} milliseconds.`;
+        document.getElementById('performance').textContent = `Employees fetched
+        in ${(end - start).toFixed(2)} milliseconds.`;
     };
 
     request.onerror = function(event) {
@@ -197,7 +222,9 @@ function displayFetchedEmployeeRecords(records) {
         const li = document.createElement('li');
 
         // Create a text node containing the employee details
-        const textNode = document.createTextNode(`${employee.id} - ${employee.name} - ${employee.job} - ${employee.employer} - ${employee.salary}`);
+        const textNode = document.createTextNode(`${employee.id} - 
+        ${employee.name} - ${employee.job} - ${employee.employer} - 
+        ${employee.salary}`);
 
         // Append the text node to the list item
         li.appendChild(textNode);
@@ -232,7 +259,8 @@ function deleteEmployeeRecordsInBatch() {
     transaction.oncomplete = function(event) {
         // Update the performance metrics
         const end = performance.now();
-        document.getElementById('performance').textContent = `Records deleted in ${(end - start).toFixed(2)} milliseconds.`;
+        document.getElementById('performance').textContent = `Records deleted 
+        in ${(end - start).toFixed(2)} milliseconds.`;
 
         // Clear the displayed records from the webpage
         employeeList.innerHTML = '';
@@ -263,6 +291,21 @@ function fetchRecordsInBatch() {
             records.push(cursor.value);
             cursor.continue(); // Move to the previous record
         } else {
+            // Calculate total size of the fetched records
+            let totalRecordSize = 0;
+            records.forEach(record => {
+                // Assuming each record has a 'data' field representing its size
+                totalRecordSize += record.data.length; // Adjust accordingly if 'data' represents the size differently
+            });
+
+            // Calculate total size in MB after transaction completes
+            const totalRecordSizeMB = totalRecordSize / (1024 * 1024); // convert to MB
+            
+            // Display the total size on the webpage
+            document.getElementById('totalRecordSize').textContent = `Total 
+            size of the DB using ${((totalRecordSize/batchSize)/1024).toFixed(2)}
+            KB per record is: ${totalRecordSizeMB.toFixed(2)} MB`;
+
             // Process the fetched records or do something else with them.
             console.log('Fetched Records:', records);
 
@@ -279,7 +322,8 @@ function fetchRecordsInBatch() {
                 console.log('No more records to fetch or fetched enough records.');
 
                 const end = performance.now();
-                document.getElementById('performance').textContent = `Records deleted in ${(end - start).toFixed(2)} milliseconds.`;
+                document.getElementById('performance').textContent = `Records 
+                fetched in ${(end - start).toFixed(2)} milliseconds.`;
             }
         }
     };
@@ -300,7 +344,9 @@ function displayFetchedRecords(records) {
         const li = document.createElement('li');
 
         // Create a text node containing the employee details
-        const textNode = document.createTextNode(`${employee.id} - ${employee.name} - ${employee.job} - ${employee.employer} - ${employee.salary}`);
+        const textNode = document.createTextNode(`${employee.id} - 
+        ${employee.name} - ${employee.job} - ${employee.employer} -
+        ${employee.salary}`);
 
         // Append the text node to the list item
         li.appendChild(textNode);
@@ -335,7 +381,8 @@ function deleteRecordsInBatch() {
     transaction.oncomplete = function(event) {
         // Update the performance metrics
         const end = performance.now();
-        document.getElementById('performance').textContent = `Records deleted in ${(end - start).toFixed(2)} milliseconds.`;
+        document.getElementById('performance').textContent = `Records deleted 
+        in ${(end - start).toFixed(2)} milliseconds.`;
 
         // Clear the displayed records from the webpage
         employeeList.innerHTML = '';
@@ -372,7 +419,9 @@ function refreshAndDisplayRecords() {
             const li = document.createElement('li');
 
             // Create a text node containing the employee details
-            const textNode = document.createTextNode(`${employee.id} - ${employee.name} - ${employee.job} - ${employee.employer} - ${employee.salary}`);
+            const textNode = document.createTextNode(`${employee.id} - 
+            ${employee.name} - ${employee.job} - ${employee.employer} - 
+            ${employee.salary}`);
 
             // Append the text node to the list item
             li.appendChild(textNode);
@@ -382,10 +431,18 @@ function refreshAndDisplayRecords() {
         });
 
         const end = performance.now();
-        document.getElementById('performance').textContent = `Records refreshed and displayed in ${(end - start).toFixed(2)} milliseconds.`;
+        document.getElementById('performance').textContent = `Records refreshed
+         and displayed in ${(end - start).toFixed(2)} milliseconds.`;
     };
 
     request.onerror = function(event) {
         console.error('Error fetching records:', event.target.error);
     };
 }
+
+
+//-----------NEW API------------------
+// TODO
+// fetchEmployeesInBatchWithNewApi() // forward dir
+
+// fetchRecordsInBatchWithNewApi() // Reverse dir
