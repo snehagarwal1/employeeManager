@@ -1,0 +1,2 @@
+// dedicated worker
+
