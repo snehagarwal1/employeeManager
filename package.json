@@ -2,33 +2,41 @@
     "name": "test-web-pages",
     "version": "1.0.0",
     "description": "Sneha's prototype",
-    "main": "employeeManager.js",
+    "main": "employeeLManager.js",
     "scripts": {
-      "start": "http-server",
-      "watch": "webpack --watch",
-      "build": "webpack"
+        "start": "http-server",
+        "build": "babel src -d dist --presets=@babel/preset-env",
+        "watch": "babel src -d dist --presets=@babel/preset-env --watch"
     },
     "repository": {
-      "type": "git",
-      "url": "git+https://github.com/snehagarwal1/employeeManager.git"
+        "type": "git",
+        "url": "git+https://github.com/snehagarwal1/employeeManager.git"
     },
     "keywords": [
-      "web",
-      "development",
-      "frontend",
-      "JavaScript",
-      "indexedDB"
+        "web",
+        "development",
+        "frontend",
+        "JavaScript",
+        "indexedDB"
     ],
     "author": "Sneha",
     "license": "ISC",
     "bugs": {
-      "url": "https://github.com/snehagarwal1/employeeManager/issues"
+        "url": "https://github.com/snehagarwal1/employeeManager/issues"
     },
     "devDependencies": {
-      "http-server": "^14.1.1",
-      "webpack": "^4.32.1",
-      "webpack-cli": "^3.3.2"
+        "@babel/cli": "^7.23.9",
+        "@babel/core": "^7.24.0",
+        "@babel/preset-env": "^7.24.0",
+        "http-server": "^14.1.1",
+        "typescript": "^5.4.2",
+        "webpack": "^5.90.3",
+        "webpack-cli": "^5.1.4"
     },
-    "homepage": "https://github.com/snehagarwal1/employeeManager#readme"
-  }
-  
+    "homepage": "https://github.com/snehagarwal1/employeeManager#readme",
+    "dependencies": {
+        "ansi-colors": "^4.1.3",
+        "cli-progress": "^3.12.0",
+        "progressbar": "^1.3.0"
+    }
+}
