@@ -199,12 +199,10 @@ let keys, values = null;
 let keyRange2 = null;
 
 function triggerFetchEmployeesByKeysInBatch() {
-
     const keyStart = parseInt(document.getElementById('keyStart').value);
     keyRangeInitial = IDBKeyRange.lowerBound(keyStart, false);
     fetchEmployeesByKeysInBatch(keyRangeInitial);
 }
-
 
 function fetchMoreByKeys(batchSize) {
   // If there could be more results, fetch them
@@ -219,6 +217,7 @@ function fetchMoreByKeys(batchSize) {
 }
  
 function fetchEmployeesByKeysInBatch(keyRangeForBatch) {
+    const start = performance.now();
     let batchSize = parseInt(document.getElementById('batchSize').value);
     
     const transaction = db.transaction(['employees'], 'readonly');
@@ -231,6 +230,10 @@ function fetchEmployeesByKeysInBatch(keyRangeForBatch) {
   store.getAll(keyRangeForBatch, batchSize).onsuccess = e => {
     values = e.target.result;
     fetchMoreByKeys(batchSize);
+
+    const end = performance.now();
+    document.getElementById('performance').textContent = `Employees fetched
+        in ${(end - start).toFixed(2)} milliseconds.`;
   }
 }
 
