@@ -192,11 +192,68 @@ function fetchEmployeesInBatch() {
     const end = performance.now();
     document.getElementById('performance').textContent = `Employees fetched
         in ${(end - start).toFixed(2)} milliseconds.`;
+}
+}
+
+let keys, values = null;
+let keyRange2 = null;
+
+function triggerFetchEmployeesByKeysInBatch() {
+
+    const keyStart = parseInt(document.getElementById('keyStart').value);
+    keyRangeInitial = IDBKeyRange.lowerBound(keyStart, false);
+    fetchEmployeesByKeysInBatch(keyRangeInitial);
+}
+
+
+function fetchMoreByKeys(batchSize) {
+  // If there could be more results, fetch them
+  if (keys && values && values.length === batchSize) {
+
+    displayFetchedEmployeeByKeysRecords(values);
+    // Find keys greater than the last key
+    keyRange2 = IDBKeyRange.lowerBound(keys.at(-1), true);
+    keys = values = undefined; // reset keys and values for next batch
+    fetchEmployeesByKeysInBatch(keyRange2);
+  }
+}
+ 
+function fetchEmployeesByKeysInBatch(keyRangeForBatch) {
+    let batchSize = parseInt(document.getElementById('batchSize').value);
     
-    // Report status back to main script
-    self.postMessage({ type: 'fetchStatus', status: 'fetching employees completed' });
+    const transaction = db.transaction(['employees'], 'readonly');
+    const store = transaction.objectStore('employees');
+    
+    store.getAllKeys(keyRangeForBatch, batchSize).onsuccess = e => {
+        keys = e.target.result;
+        fetchMoreByKeys(batchSize);
+  }
+  store.getAll(keyRangeForBatch, batchSize).onsuccess = e => {
+    values = e.target.result;
+    fetchMoreByKeys(batchSize);
+  }
 }
-}
+
+function displayFetchedEmployeeByKeysRecords(employees) {
+    const employeeList = document.getElementById('employeeList');
+    
+    employees.forEach(employee => {
+      // Create a list item element
+      const li = document.createElement('li');
+  
+      // Create a text node containing the employee details
+      const text = document.createTextNode(`${employee.id} - ${employee.name} - ${employee.job} - ${employee.employer}`);
+      li.appendChild(text);
+  
+      // Append the list item to the employee list container
+      employeeList.appendChild(li);
+    });
+  
+    // Add batch end separator
+    const batchEnd = document.createElement('li');
+    batchEnd.textContent = "------------------ Batch End ------------------";
+    employeeList.appendChild(batchEnd);
+  }
 
 function displayFetchedEmployeeRecords(employees) {
   const employeeList = document.getElementById('employeeList');

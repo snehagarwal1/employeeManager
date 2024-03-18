@@ -27,7 +27,11 @@
 <div>
     <h3>Batch Retrieval and Deletion in forward direction</h3>
     <input type="number" id="batchSize" placeholder="Batch size value">
-    <button onclick="fetchEmployeesInBatch()">Fetch Employees in Batch (old API)</button> 
+    <button onclick="fetchEmployeesInBatch()">Fetch all employees in Batch (old API)</button> 
+
+    <input type="number" id="keyStart" placeholder="Starting Key value">
+    <button onclick="triggerFetchEmployeesByKeysInBatch()">Fetch all employees by keys in Batch (old API)</button> 
+
     <button onclick="fetchEmployeesInBatchWithNewApi()">Fetch Employees in Batch (new API)</button> 
     <button onclick="deleteEmployeeRecordsInBatch()">Delete Employees in  batch</button>
     <button onclick="clearEmployeeList()">Clear Employee List</button> <!-- Clear Employee List Button -->
