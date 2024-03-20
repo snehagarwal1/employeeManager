@@ -195,6 +195,26 @@ function fetchEmployeesInBatch() {
 }
 }
 
+function displayFetchedEmployeeRecords(employees) {
+    const employeeList = document.getElementById('employeeList');
+  
+    employees.forEach(employee => {
+      // Create a list item element
+      const li = document.createElement('li');
+  
+      // Create a text node containing the employee details
+      li.textContent = `${employee.id} -${employee.name} - ${employee.job} - ${employee.employer}`;
+      employeeList.appendChild(li);
+    });
+  
+    const li = document.createElement('li');
+    li.textContent = "------------------ Batch End ------------------";;
+  
+    // Append the list item to the employee list container
+    employeeList.appendChild(li);
+}
+
+// --------GetAllKeys() API fetch in forward direction in batch------------------
 let keys, values = null;
 let keyRange2 = null;
 
@@ -258,25 +278,6 @@ function displayFetchedEmployeeByKeysRecords(employees) {
     employeeList.appendChild(batchEnd);
   }
 
-function displayFetchedEmployeeRecords(employees) {
-  const employeeList = document.getElementById('employeeList');
-
-  employees.forEach(employee => {
-    // Create a list item element
-    const li = document.createElement('li');
-
-    // Create a text node containing the employee details
-    li.textContent = `${employee.id} -${employee.name} - ${employee.job} - ${employee.employer}`;
-    employeeList.appendChild(li);
-  });
-
-  const li = document.createElement('li');
-  li.textContent = "------------------ Batch End ------------------";;
-
-  // Append the list item to the employee list container
-  employeeList.appendChild(li);
-}
-
 function deleteEmployeeRecordsInBatch() {
     const start = performance.now();
     const batchSize = parseInt(document.getElementById('batchSize').value);
@@ -313,6 +314,8 @@ function deleteEmployeeRecordsInBatch() {
         console.error('Error deleting records:', event.target.error);
     };
 }
+
+//-----USE openCursor() API to fetch records in batch in reverse --------
 
 let keyRangeReverse = null;
 
@@ -409,7 +412,7 @@ function clearEmployeeListReverse() {
 }
 
 
-// Refresh and display records 
+//-----------Refresh and display all records.-----------------------------------
 function refreshAndDisplayRecords() {
     const start = performance.now();
     const transaction = db.transaction(['employees'], 'readonly');
@@ -449,9 +452,122 @@ function refreshAndDisplayRecords() {
     };
 }
 
+//---------Use openKeyCursor() API Used for iterating through the keys of 
+// an object store with a cursor.---------------------------------------------
+
+function fetchRecordsInBatchByKeysReverse() {
+    const start = performance.now();
+    const batchSize = parseInt(document.getElementById('batchSizeReverse').value);
+    const keyStartReverse = parseInt(document.getElementById('keyStartReverse').value);
+    const transaction = db.transaction(['employees'], 'readonly');
+    const store = transaction.objectStore('employees');
+
+    let cursorRequest;
+    
+    let keys = [];
+    // Define the key range for the cursor
+    const keyRange = IDBKeyRange.upperBound(keyStartReverse, false);
+
+    // Open a cursor with direction 'prev' to fetch records in reverse order
+    cursorRequest = store.openKeyCursor(keyRange, 'prev');
+
+    cursorRequest.onsuccess = function(event) {
+
+        const cursor = event.target.result;
+
+        if (cursor) {
+            if (keys.length < batchSize) {
+                keys.push(cursor.key);
+            } else {
+                fetchAndDisplayRecordsByKeys(keys);
+                keys = [];
+            }
+            cursor.continue(); // Move to the previous key
+        } else {
+            // No more records to fetch
+            console.log('All records fetched in reverse order.');
+
+            const end = performance.now();
+            document.getElementById('performance').textContent = `Records 
+            fetched in ${(end - start).toFixed(2)} milliseconds.`;
+        }
+    };
+}
+
+function fetchAndDisplayRecordsByKeys(keysBatch) {  // [50,49,48,47]
+
+    const transaction = db.transaction(['employees'], 'readonly');
+    const store = transaction.objectStore('employees');
+    let last = keysBatch[0];
+    let first = keysBatch[keysBatch.length -1];
+    let batchKeyRange = IDBKeyRange.bound(first, last);
+    store.getAll(batchKeyRange).onsuccess = function(event){
+        let values = event.target.result;
+        displayFetchedReverseRecordsByKeys(values);
+    }	
+}
+
+function displayFetchedReverseRecordsByKeys(employees) {
+    const employeeList = document.getElementById('employeeListReverse');
+    employees.forEach(employee => {
+        const li = document.createElement('li');
+        li.textContent = `${employee.id} - ${employee.name} - ${employee.job} - ${employee.employer}`;
+        employeeList.appendChild(li);
+    });
+    const li = document.createElement('li');
+    li.textContent = "------------------ Batch End ------------------";;
+    employeeList.appendChild(li);
+}
 
 //-----------NEW API------------------
-// TODO
-// fetchEmployeesInBatchWithNewApi() // forward dir
+// Forward direction with GetAllEntries() - takes only BatchSize as input
+let keyRange4 = null;
+
+function fetchMoreWithNewApi(batchSize) {
+    const records = event.target.result;
+      if (records && records.length === batchSize) {
+        keyRange4 = IDBKeyRange.lowerBound(records.at(-1).key, true);
+        fetchEmployeesInBatchWithNewApi();
+    }
+};
+
+function fetchEmployeesInBatchWithNewApi() {
+    const start = performance.now();
+    const batchSize = parseInt(document.getElementById('batchSize').value);
+    const keyStart = parseInt(document.getElementById('keyStart').value);
+    const transaction = db.transaction(['employees'], 'readonly');
+    const store = transaction.objectStore('employees');
+    store.getAllEntries(keyRange4, batchSize, 'next').onsuccess = e => {
+        const records = e.target.result;
+        console.log(records);
+        fetchMoreWithNewApi(batchSize);
+
+        const end = performance.now();
+        document.getElementById('performance').textContent = `Employees fetched
+            in ${(end - start).toFixed(2)} milliseconds.`;
+
+        displayEmployeeKeyRecords(records);
+    }
+}
+
+function displayEmployeeKeyRecords(employees) {
+    const employeeList = document.getElementById('employeeList');
+  
+    employees.forEach(employee => {
+      // Create a list item element
+      const li = document.createElement('li');
+  
+      // Create a text node containing the employee details
+      li.textContent = `${employee.key} - ${employee.value.name} - ${employee.value.job} - ${employee.value.employer}`;
+      console.log(employee.value.name);
+      employeeList.appendChild(li);
+    });
+  
+    const li = document.createElement('li');
+    li.textContent = "------------------ Batch End ------------------";;
+  
+    // Append the list item to the employee list container
+    employeeList.appendChild(li);
+}
 
 // fetchRecordsInBatchWithNewApi() // Reverse dir
