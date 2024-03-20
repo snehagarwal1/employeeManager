@@ -494,7 +494,7 @@ function fetchRecordsInBatchByKeysReverse() {
     };
 }
 
-function fetchAndDisplayRecordsByKeys(keysBatch) {  // [50,49,48,47]
+function fetchAndDisplayRecordsByKeys(keysBatch) {
 
     const transaction = db.transaction(['employees'], 'readonly');
     const store = transaction.objectStore('employees');
@@ -570,4 +570,32 @@ function displayEmployeeKeyRecords(employees) {
     employeeList.appendChild(li);
 }
 
-// fetchRecordsInBatchWithNewApi() // Reverse dir
+// USe GetAllEntries in Reverse dir to fetch all data, takes only batch size as input from the user. 
+
+let keyRange5 = null;
+
+function fetchMoreInReverseWithNewApi(batchSize) {
+    const records = event.target.result;
+      if (records && records.length === batchSize) {
+        keyRange5 = IDBKeyRange.upperBound(records.at(-1).key, true);
+        fetchRecordsInBatchWithNewApi();
+    }
+};
+
+function fetchRecordsInBatchWithNewApi() {
+    const start = performance.now();
+    const batchSize = parseInt(document.getElementById('batchSizeReverse').value);
+    const transaction = db.transaction(['employees'], 'readonly');
+    const store = transaction.objectStore('employees');
+    store.getAllEntries(keyRange5, batchSize, 'prev').onsuccess = e => {
+        const records = e.target.result;
+        console.log(records);
+        fetchMoreInReverseWithNewApi(batchSize);
+
+        const end = performance.now();
+        document.getElementById('performance').textContent = `Employees fetched
+            in ${(end - start).toFixed(2)} milliseconds.`;
+
+        displayEmployeeKeyRecords(records);
+    }
+}
