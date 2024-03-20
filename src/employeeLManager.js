@@ -95,18 +95,11 @@ function addRandomEmployees() {
         objectStore.add(employee);
         totalRecordSize += recordSize; // Add the size of the current record to the total
 
-        // // Calculate progress
-        // const progress = ((i + 1) / randomCount) * 100;
-
-        // // Update progress bar
-        // progressBar.style.width = progress + '%';
-        // progressBar.setAttribute('aria-valuenow', progress);
-
-         // Calculate total size in MB after transaction completes
-         const totalRecordSizeMB = totalRecordSize / (1024 * 1024); // convert to MB
-         document.getElementById('totalRecordSize').textContent = `Total size 
-         of the DB using ${recordSize / 1024} KB per record is: 
-         ${totalRecordSizeMB.toFixed(2)} MB`;
+        // Calculate total size in MB after transaction completes
+        const totalRecordSizeMB = totalRecordSize / (1024 * 1024); // convert to MB
+        document.getElementById('totalRecordSize').textContent = `Total size 
+        of the DB using ${recordSize / 1024} KB per record is: 
+        ${totalRecordSizeMB.toFixed(2)} MB`;
     }
 
     transaction.oncomplete = function() {
@@ -114,9 +107,6 @@ function addRandomEmployees() {
         console.log(`${randomCount} records added successfully.`);
         console.log(`Total database size: ${totalRecordSize * randomCount} bytes`);
         fetchEmployees();
-
-        // Report status back to main script
-        self.postMessage({ type: 'addStatus', status: 'Adding employees completed' });
     };
 
     const end = performance.now();
@@ -166,15 +156,13 @@ function clearEmployeeList() {
     console.log('Employee list cleared.');
 }
 
-// Batch retrival and deletetion in forward direction using getAall()
+//-------GetAll() API for Batch retriving records in forward direction ----------
 let keyRange = null;
 
 function fetchMore(batchSize) {
     const records = event.target.result;
       if (records && records.length === batchSize) {
         keyRange = IDBKeyRange.lowerBound(records.at(-1).id, true);
-        // Report status back to main script
-        self.postMessage({ type: 'fetchStatus', status: 'fetching employees in progress' });
         fetchEmployeesInBatch();
     }
 };
@@ -192,7 +180,7 @@ function fetchEmployeesInBatch() {
     const end = performance.now();
     document.getElementById('performance').textContent = `Employees fetched
         in ${(end - start).toFixed(2)} milliseconds.`;
-}
+    }
 }
 
 function displayFetchedEmployeeRecords(employees) {
@@ -214,7 +202,7 @@ function displayFetchedEmployeeRecords(employees) {
     employeeList.appendChild(li);
 }
 
-// --------GetAllKeys() API fetch in forward direction in batch------------------
+// --------GetAllKeys() API fetch keys in forward direction in batch------------------
 let keys, values = null;
 let keyRange2 = null;
 
@@ -247,6 +235,7 @@ function fetchEmployeesByKeysInBatch(keyRangeForBatch) {
         keys = e.target.result;
         fetchMoreByKeys(batchSize);
   }
+  // gets the records/values associated with the keys.
   store.getAll(keyRangeForBatch, batchSize).onsuccess = e => {
     values = e.target.result;
     fetchMoreByKeys(batchSize);
@@ -278,6 +267,7 @@ function displayFetchedEmployeeByKeysRecords(employees) {
     employeeList.appendChild(batchEnd);
   }
 
+//---------deleted employee records ------------------------------------------
 function deleteEmployeeRecordsInBatch() {
     const start = performance.now();
     const batchSize = parseInt(document.getElementById('batchSize').value);
@@ -315,7 +305,7 @@ function deleteEmployeeRecordsInBatch() {
     };
 }
 
-//-----USE openCursor() API to fetch records in batch in reverse --------
+//-----USE openCursor() API to fetch records in batch in reverse ------------
 
 let keyRangeReverse = null;
 
@@ -519,7 +509,7 @@ function displayFetchedReverseRecordsByKeys(employees) {
     employeeList.appendChild(li);
 }
 
-//-----------NEW API------------------
+//-------------------------------NEW API---------------------------------------
 // Forward direction with GetAllEntries() - takes only BatchSize as input
 let keyRange4 = null;
 
