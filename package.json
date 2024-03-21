@@ -2,7 +2,7 @@
     "name": "test-web-pages",
     "version": "1.0.0",
     "description": "Sneha's prototype",
-    "main": "employeeLManager.js",
+    "main": "employeeManager.js",
     "scripts": {
         "start": "http-server",
         "build": "babel src -d dist --presets=@babel/preset-env",
