@@ -27,11 +27,12 @@
 <div>
     <h3>Batch Retrieval and Deletion in forward direction</h3>
     <input type="number" id="batchSize" placeholder="Batch size value">
-    <button onclick="fetchEmployeesInBatch()">Fetch all employees in Batch (old API)</button> 
+    <button onclick="fetchEmployeesInBatch()">Fetch all employees (old API getAll())</button> 
+    <button onclick="fetchEmployeesInBatchWithNewApi()">Fetch Employees (new API getAllEntries())</button> 
     <input type="number" id="keyStart" placeholder="Starting Key value">
-    <button onclick="triggerFetchEmployeesByKeysInBatch()">Fetch all employees by keys in Batch (old API)</button> 
-    <button onclick="fetchEmployeesInBatchWithNewApi()">Fetch Employees in Batch (new API)</button> 
-    <button onclick="deleteEmployeeRecordsInBatch()">Delete Employees in  batch</button>
+    <button onclick="triggerFetchEmployeesByKeysInBatch()">Fetch all employees by keys (old API getAllKeys())</button> 
+   
+    <!-- <button onclick="deleteEmployeeRecordsInBatch()">Delete Employees in  batch</button> -->
     <button onclick="clearEmployeeList()">Clear Employee List</button> <!-- Clear Employee List Button -->
 </div>
 
@@ -44,11 +45,12 @@
 <div>
     <h3>Batch Retrieval and Deletion in reverse direction</h3>
     <input type="number" id="batchSizeReverse" placeholder="Batch size value">
-    <button onclick="fetchRecordsInBatchReverse()">Fetch Employees in batch (old API)</button> 
+    <button onclick="fetchRecordsInBatchReverse()">Fetch Employees (old API(OpenCursor()))</button> 
+    <button onclick="fetchRecordsInBatchWithNewApi()">Fetch Employees (new API GetAllEntries())</button> 
     <input type="number" id="keyStartReverse" placeholder="Starting Key value">
-    <button onclick="fetchRecordsInBatchByKeysReverse()">Fetch Employees in batch (old API)</button> 
-    <button onclick="fetchRecordsInBatchWithNewApi()">Fetch Employees in batch (new API)</button> 
-    <button onclick="deleteRecordsInBatch()">Delete Employees in  batch</button>
+    <button onclick="fetchRecordsInBatchByKeysReverse()">Fetch Employees (old API OpenKeyCursor())</button> 
+
+    <!-- <button onclick="deleteRecordsInBatch()">Delete Employees in  batch</button> -->
     <button onclick="clearEmployeeListReverse()">Clear Employee List</button> <!-- Clear Employee List Button -->
 </div>
 
