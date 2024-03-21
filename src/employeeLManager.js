@@ -586,6 +586,26 @@ function fetchRecordsInBatchWithNewApi() {
         document.getElementById('performance').textContent = `Employees fetched
             in ${(end - start).toFixed(2)} milliseconds.`;
 
-        displayEmployeeKeyRecords(records);
+        displayEmployeeKeyRecordsinReverse(records);
     }
+}
+
+function displayEmployeeKeyRecordsinReverse(employees) {
+    const employeeList = document.getElementById('employeeListReverse');
+  
+    employees.forEach(employee => {
+      // Create a list item element
+      const li = document.createElement('li');
+  
+      // Create a text node containing the employee details
+      li.textContent = `${employee.key} - ${employee.value.name} - ${employee.value.job} - ${employee.value.employer}`;
+      console.log(employee.value.name);
+      employeeList.appendChild(li);
+    });
+  
+    const li = document.createElement('li');
+    li.textContent = "------------------ Batch End ------------------";;
+  
+    // Append the list item to the employee list container
+    employeeList.appendChild(li);
 }
