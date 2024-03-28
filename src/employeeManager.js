@@ -444,59 +444,50 @@ function refreshAndDisplayRecords() {
 
 //---------Use openKeyCursor() API Used for iterating through the keys of 
 // an object store with a cursor.---------------------------------------------
+let keyStartReverse = null;
 
 function fetchRecordsInBatchByKeysReverse() {
     const start = performance.now();
     const batchSize = parseInt(document.getElementById('batchSizeReverse').value);
-    const keyStartReverse = parseInt(document.getElementById('keyStartReverse').value);
+    //const keyStartReverse = parseInt(document.getElementById('keyStartReverse').value);
     const transaction = db.transaction(['employees'], 'readonly');
     const store = transaction.objectStore('employees');
 
     let cursorRequest;
-    
-    let keys = [];
-    // Define the key range for the cursor
-    const keyRange = IDBKeyRange.upperBound(keyStartReverse, false);
+    let records = [];
 
-    // Open a cursor with direction 'prev' to fetch records in reverse order
-    cursorRequest = store.openKeyCursor(keyRange, 'prev');
+    // Open a cursor with direction 'prev' to fetch records in reverse order.
+    cursorRequest = store.openKeyCursor(keyRangeReverse, 'prev');
 
     cursorRequest.onsuccess = function(event) {
-
         const cursor = event.target.result;
+        if (cursor && records.length < batchSize) {
 
-        if (cursor) {
-            if (keys.length < batchSize) {
-                keys.push(cursor.key);
-            } else {
-                fetchAndDisplayRecordsByKeys(keys);
-                keys = [];
-            }
-            cursor.continue(); // Move to the previous key
+            store.get(cursor.primaryKey).onsuccess = function(event) {
+                records.push(event.target.result);
+                cursor.continue(); // Move to the previous record
+            };
+
         } else {
-            // No more records to fetch
-            console.log('All records fetched in reverse order.');
+            displayFetchedReverseRecordsByKeys(records);
 
-            const end = performance.now();
-            document.getElementById('performance').textContent = `Records 
-            fetched in ${(end - start).toFixed(2)} milliseconds.`;
+            if (cursor) {
+                // Update keyRangeReverse for the next batch
+                keyRangeReverse = IDBKeyRange.upperBound(records.at(-1).id, true);
+                // Fetch more records
+                fetchRecordsInBatchByKeysReverse();
+            } else {
+                const end = performance.now();
+                document.getElementById('performance').textContent = `Records 
+                fetched in ${(end - start).toFixed(2)} milliseconds.`;
+
+                // No more records to fetch
+                console.log('All records fetched in reverse order.');
+            }
         }
     };
 }
-
-function fetchAndDisplayRecordsByKeys(keysBatch) {
-
-    const transaction = db.transaction(['employees'], 'readonly');
-    const store = transaction.objectStore('employees');
-    let last = keysBatch[0];
-    let first = keysBatch[keysBatch.length -1];
-    let batchKeyRange = IDBKeyRange.bound(first, last);
-    store.getAll(batchKeyRange).onsuccess = function(event){
-        let values = event.target.result;
-        displayFetchedReverseRecordsByKeys(values);
-    }	
-}
-
+    
 function displayFetchedReverseRecordsByKeys(employees) {
     const employeeList = document.getElementById('employeeListReverse');
     employees.forEach(employee => {
