@@ -30,6 +30,7 @@ HOW TO USE THE DEMO
 
 
 7. The time taken to display the results is displayed along with the size of the record. This needs to be adjusted to show the time required to only process the batches and not include the
-   time taken to also display them. 
+   time taken to also display them. The time and record size can be cleared using the "Clear Performance and size data" button.
+   
    <img width="500" alt="Screenshot 2024-03-29 at 3 40 08 PM" src="https://github.com/snehagarwal1/employeeManager/assets/103469166/5a6685fe-e7e7-4b2e-aadb-2b1c73b112dd">
 
