@@ -17,7 +17,7 @@ HOW TO USE THE DEMO
 1. Before beginning any fetching of records we need to first create the DB. Use the form provided to add the total
    number of employees/ records and the size of each record in kb. Select "Add Random Employees" .
    This should initialize the IDB.
-   <img width="798" alt="Screenshot 2024-03-29 at 3 40 27 PM" src="https://github.com/snehagarwal1/employeeManager/assets/103469166/894b9ef4-bdb8-45f1-9204-e25a6c831b69">
+   <img width="751" alt="Screenshot 2024-03-29 at 2 16 55 PM" src="https://github.com/snehagarwal1/employeeManager/assets/103469166/43b65e22-320a-40d4-a5e4-5d42ea456d50">
 
 
 3. You can use the "delete all Employees" button to delete the DB and start a fresh one. 
